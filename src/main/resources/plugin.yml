@@ -1,0 +1,17 @@
+main: ${project.groupId}.${project.artifactId}
+name: Palette
+version: ${project.version}
+depend: [UILib]
+author: MegaNarwhal_
+description: Preset block palettes for building.
+commands:
+  palette:
+    description: Select a palette.
+    usage: "/<command> [name]"
+    aliases: [pal]
+  palmg:
+    description: Manage palettes.
+permissions:
+  palette.manage:
+    description: Add and remove palettes.
+    default: op
