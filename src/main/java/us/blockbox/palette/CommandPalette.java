@@ -36,6 +36,8 @@ public class CommandPalette implements CommandExecutor{
 		if(sender instanceof Player){
 			final View v = getCachedPaletteView();
 			viewManager.setView(((Player)sender),v);
+		}else{
+			sender.sendMessage("You must be a player.");
 		}
 		return true;
 	}
