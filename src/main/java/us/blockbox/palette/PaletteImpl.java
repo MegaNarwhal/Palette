@@ -1,14 +1,18 @@
 package us.blockbox.palette;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import static us.blockbox.palette.PalettePlugin.HOTBAR_LENGTH;
 
 public class PaletteImpl implements Palette{
 	private final String name;
 	private final ItemStack[] itemStacks;
 
 	public PaletteImpl(String name,ItemStack[] itemStacks){
+		Validate.isTrue(itemStacks.length == HOTBAR_LENGTH);
 		this.name = name;
 		this.itemStacks = itemStacks;
 	}

@@ -22,6 +22,7 @@ public class PalettePlugin extends JavaPlugin implements Listener{
 	private PaletteManager paletteManager;
 	public static final int HOTBAR_LENGTH = 9;
 	private final Pattern colon = Pattern.compile(":");
+	private ViewFactory viewFactory;
 
 	@Override
 	public void onEnable(){
@@ -29,7 +30,8 @@ public class PalettePlugin extends JavaPlugin implements Listener{
 		saveDefaultConfig();
 		getServer().getPluginManager().registerEvents(this,this);
 		paletteManager = new PaletteManager(loadPalettes(),stringSanitizer);
-		getCommand("palette").setExecutor(new CommandPalette(paletteManager,UIPlugin.getViewManager()));
+		viewFactory = new ViewFactory(paletteManager);
+		getCommand("palette").setExecutor(new CommandPalette(UIPlugin.getViewManager(),viewFactory));
 		getCommand("palmg").setExecutor(new CommandManage(instance));
 	}
 

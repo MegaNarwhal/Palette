@@ -6,12 +6,12 @@ public class PaletteManager{
 	private final Map<String,Palette> palettes;
 	private final StringSanitizer stringSanitizer;
 
-	PaletteManager(StringSanitizer stringSanitizer){
+	public PaletteManager(StringSanitizer stringSanitizer){
 		this.stringSanitizer = stringSanitizer;
 		this.palettes = new HashMap<>();
 	}
 
-	PaletteManager(Collection<Palette> palettes,StringSanitizer stringSanitizer){
+	public PaletteManager(Collection<Palette> palettes,StringSanitizer stringSanitizer){
 		this.palettes = new HashMap<>(palettes.size());
 		this.stringSanitizer = stringSanitizer;
 		addAll(palettes);

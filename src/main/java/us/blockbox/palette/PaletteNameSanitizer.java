@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class PaletteNameSanitizer implements StringSanitizer{
+public class PaletteNameSanitizer implements StringSanitizer{
 	private static final Matcher spaceMatcher;
 
 	static{

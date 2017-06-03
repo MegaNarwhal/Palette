@@ -1,5 +1,5 @@
 package us.blockbox.palette;
 
-interface StringSanitizer{
+public interface StringSanitizer{
 	String sanitize(String s);
 }

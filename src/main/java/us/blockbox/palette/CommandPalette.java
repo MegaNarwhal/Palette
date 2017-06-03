@@ -1,68 +1,30 @@
 package us.blockbox.palette;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import us.blockbox.uilib.ItemBuilder;
 import us.blockbox.uilib.ViewManager;
-import us.blockbox.uilib.component.Component;
-import us.blockbox.uilib.view.InventoryView;
 import us.blockbox.uilib.view.View;
-
-import java.util.Collection;
 
 public class CommandPalette implements CommandExecutor{
 	private final ViewManager viewManager;
-	private PaletteManager paletteManager;
-	private CachedObject<View> paletteView = new CachedObject<View>(){
-		@Override
-		protected void validate(){
-			final View paletteView = getPaletteView();
-			setValue(paletteView);
-		}
-	};
+	private ViewFactory viewFactory;
 
-	CommandPalette(PaletteManager paletteManager,ViewManager viewManager){
-		this.paletteManager = paletteManager;
+	CommandPalette(ViewManager viewManager,ViewFactory viewFactory){
 		this.viewManager = viewManager;
-		paletteView.getValue();
+		this.viewFactory = viewFactory;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
 		if(sender instanceof Player){
-			final View v = getCachedPaletteView();
+			final View v = viewFactory.getCachedPaletteView();
 			viewManager.setView(((Player)sender),v);
 		}else{
 			sender.sendMessage("You must be a player.");
 		}
 		return true;
-	}
-
-	private View getCachedPaletteView(){
-		return paletteView.getValue();
-	}
-
-	private View getPaletteView(){
-		final Collection<Palette> palettes = paletteManager.getPalettes();
-		final Component[] components = new Component[palettes.size()];
-		int i = 0;
-		for(final Palette palette : palettes){
-			ItemStack icon = new ItemStack(Material.BRICK);
-			for(final ItemStack itemStack : palette.getItemStacks()){
-				if(itemStack != null){
-					icon = itemStack.clone();
-					break;
-				}
-			}
-			icon = new ItemBuilder(icon).name(palette.getName()).build();
-			components[i] = new PaletteChooser(palette.getName(),null,null,icon,palette);
-			i++;
-		}
-		return InventoryView.createPaginated("Palette Chooser",components,5);
 	}
 
 //		private View getRandomView(){
