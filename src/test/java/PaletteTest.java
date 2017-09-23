@@ -7,10 +7,11 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import us.blockbox.palette.PaletteImpl;
-import us.blockbox.palette.PaletteManager;
+import us.blockbox.palette.PaletteManagerImpl;
 import us.blockbox.palette.PaletteNameSanitizer;
 import us.blockbox.palette.ViewFactoryImpl;
 import us.blockbox.palette.api.Palette;
+import us.blockbox.palette.api.PaletteManager;
 import us.blockbox.palette.api.StringSanitizer;
 import us.blockbox.palette.api.ViewFactory;
 import us.blockbox.uilib.api.View;
@@ -52,7 +53,7 @@ public class PaletteTest{
 		final PaletteImpl testPalette = new PaletteImpl(name,sanitizer.sanitize(name),new ItemStack[9]);
 		palettes.add(testPalette);
 		final PaletteNameSanitizer stringSanitizer = new PaletteNameSanitizer();
-		final PaletteManager paletteManager = new PaletteManager(palettes,stringSanitizer);
+		final PaletteManager paletteManager = new PaletteManagerImpl(palettes,stringSanitizer);
 		assertEquals(testPalette,paletteManager.get("tes t"));
 		assertNull(paletteManager.get("nonexistent"));
 		final Set<String> names = paletteManager.getNames();
@@ -70,11 +71,11 @@ public class PaletteTest{
 			final String name = "Palette " + i;
 			palettes.add(new PaletteImpl(name,sanitizer.sanitize(name),itemStacks));
 		}
-		final PaletteManager paletteManager = new PaletteManager(palettes,new PaletteNameSanitizer());
+		final PaletteManager paletteManager = new PaletteManagerImpl(palettes,new PaletteNameSanitizer());
 		final ViewFactory factory = new ViewFactoryImpl(paletteManager,false);
 		final Player mockPlayer = mockPlayerWithInventory("MockPlayer",UUID.randomUUID());
 		final View view = factory.get(mockPlayer);
-		System.out.println(view.size());
+		assertEquals(41,view.size());
 	}
 
 	private static Player mockPlayerWithInventory(String name,UUID uuid){
@@ -107,7 +108,6 @@ public class PaletteTest{
 				Arrays.fill(contents,null);
 				final ItemStack[] items = invocationOnMock.getArgument(0);
 				System.arraycopy(items,0,contents,0,items.length);
-				System.out.println(items.length);
 				return null;
 			}
 		}).when(invMocked).setContents(any(ItemStack[].class));

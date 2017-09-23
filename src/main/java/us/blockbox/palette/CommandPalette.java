@@ -8,9 +8,9 @@ import us.blockbox.palette.api.ViewFactory;
 import us.blockbox.uilib.api.View;
 import us.blockbox.uilib.api.ViewManager;
 
-public class CommandPalette implements CommandExecutor{
+public final class CommandPalette implements CommandExecutor{
 	private final ViewManager viewManager;
-	private ViewFactory viewFactory;
+	private final ViewFactory viewFactory;
 
 	CommandPalette(ViewManager viewManager,ViewFactory viewFactory){
 		this.viewManager = viewManager;

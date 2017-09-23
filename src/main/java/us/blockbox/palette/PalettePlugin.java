@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.blockbox.palette.api.Palette;
+import us.blockbox.palette.api.PaletteManager;
 import us.blockbox.palette.api.StringSanitizer;
 import us.blockbox.palette.api.ViewFactory;
 import us.blockbox.uilib.viewmanager.ViewManagerFactory;
@@ -21,7 +22,7 @@ public final class PalettePlugin extends JavaPlugin{
 
 	private static PalettePlugin instance;
 	private final StringSanitizer stringSanitizer = new PaletteNameSanitizer();
-	private PaletteManager paletteManager;
+	private PaletteManagerImpl paletteManager;
 	public static final int HOTBAR_LENGTH = 9;
 	private final Pattern colon = Pattern.compile(":");
 	private ViewFactory viewFactory;
@@ -30,7 +31,7 @@ public final class PalettePlugin extends JavaPlugin{
 	public void onEnable(){
 		instance = this;
 		saveDefaultConfig();
-		paletteManager = new PaletteManager(loadPalettes(),stringSanitizer);
+		paletteManager = new PaletteManagerImpl(loadPalettes(),stringSanitizer);
 		final boolean usePermissions = getConfig().getBoolean("usepermissions");
 		viewFactory = new ViewFactoryImpl(paletteManager,usePermissions);
 		getCommand("palette").setExecutor(new CommandPalette(ViewManagerFactory.getInstance(),viewFactory));
@@ -106,8 +107,12 @@ public final class PalettePlugin extends JavaPlugin{
 		return stack;
 	}
 
-	public boolean addPaletteToConfig(String key,Palette palette){
-		final ConfigurationSection palettes = getConfig().getConfigurationSection("palettes");
+	public boolean addToConfig(String key,Palette palette){
+		final String palettesKey = "palettes";
+		ConfigurationSection palettes = getConfig().getConfigurationSection(palettesKey);
+		if(palettes == null){
+			palettes = getConfig().createSection(palettesKey);
+		}
 		final ConfigurationSection section = palettes.createSection(stringSanitizer.sanitize(key));
 		section.set("name",palette.getName());
 		final ConfigurationSection items = section.createSection("items");
@@ -128,6 +133,22 @@ public final class PalettePlugin extends JavaPlugin{
 			}
 		}
 		saveConfig();
+		paletteManager.add(palette);
 		return true;
+	}
+
+	public boolean removeFromConfig(String key){
+		final String palettesKey = "palettes";
+		ConfigurationSection palettes = getConfig().getConfigurationSection(palettesKey);
+		if(palettes == null){
+			palettes = getConfig().createSection(palettesKey);
+		}
+		if(palettes.isSet(key) && palettes.isConfigurationSection(key)){
+			palettes.set(key,null);
+			saveConfig();
+			paletteManager.remove(key);
+			return true;
+		}
+		return false;
 	}
 }
