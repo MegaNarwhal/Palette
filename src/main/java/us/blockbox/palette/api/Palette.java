@@ -1,4 +1,4 @@
-package us.blockbox.palette;
+package us.blockbox.palette.api;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -8,6 +8,7 @@ public interface Palette{
 
 	ItemStack[] getItemStacks();
 
-	@SuppressWarnings("deprecation")
 	void equip(Player player);
+
+	String getPermission();
 }

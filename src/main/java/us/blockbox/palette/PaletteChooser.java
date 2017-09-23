@@ -4,7 +4,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import us.blockbox.uilib.component.AbstractItem;
+import us.blockbox.palette.api.Palette;
+import us.blockbox.uilib.api.AbstractItem;
 
 public class PaletteChooser extends AbstractItem{
 	private final Palette palette;

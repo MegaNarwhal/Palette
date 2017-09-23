@@ -2,11 +2,18 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import us.blockbox.palette.*;
-import us.blockbox.uilib.view.View;
+import us.blockbox.palette.PaletteImpl;
+import us.blockbox.palette.PaletteManager;
+import us.blockbox.palette.PaletteNameSanitizer;
+import us.blockbox.palette.ViewFactoryImpl;
+import us.blockbox.palette.api.Palette;
+import us.blockbox.palette.api.StringSanitizer;
+import us.blockbox.palette.api.ViewFactory;
+import us.blockbox.uilib.api.View;
 
 import java.util.*;
 
@@ -21,7 +28,7 @@ public class PaletteTest{
 			stacks[i] = new ItemStack(Material.WOOL,1,((short)i));
 		}
 
-		final Palette palette = new PaletteImpl("Test",stacks);
+		final Palette palette = new PaletteImpl("Test","",stacks);
 		final Player p = mockPlayerWithInventory("Dummy",UUID.randomUUID());
 
 		final ItemStack[] contentsBefore = p.getInventory().getContents();
@@ -40,7 +47,9 @@ public class PaletteTest{
 	@Test
 	public void testPaletteManager(){
 		final Collection<Palette> palettes = new ArrayList<>();
-		final PaletteImpl testPalette = new PaletteImpl("T E S T",new ItemStack[9]);
+		final StringSanitizer sanitizer = new PaletteNameSanitizer();
+		final String name = "T E S T";
+		final PaletteImpl testPalette = new PaletteImpl(name,sanitizer.sanitize(name),new ItemStack[9]);
 		palettes.add(testPalette);
 		final PaletteNameSanitizer stringSanitizer = new PaletteNameSanitizer();
 		final PaletteManager paletteManager = new PaletteManager(palettes,stringSanitizer);
@@ -50,16 +59,21 @@ public class PaletteTest{
 		assertTrue(names.size() == 1 && names.contains("test"));
 	}
 
+	@Test
+	@Ignore
 	public void testPaletteView(){
 		final Collection<Palette> palettes = new ArrayList<>();
+		final StringSanitizer sanitizer = new PaletteNameSanitizer();
 		for(int i = 0; i < 9; i++){
 			final ItemStack[] itemStacks = new ItemStack[9];
 			itemStacks[0] = new ItemStack(Material.WOOL,1,(short)i);
-			palettes.add(new PaletteImpl("Palette " + i,itemStacks));
+			final String name = "Palette " + i;
+			palettes.add(new PaletteImpl(name,sanitizer.sanitize(name),itemStacks));
 		}
 		final PaletteManager paletteManager = new PaletteManager(palettes,new PaletteNameSanitizer());
-		final ViewFactory factory = new ViewFactory(paletteManager);
-		final View view = factory.getCachedPaletteView();
+		final ViewFactory factory = new ViewFactoryImpl(paletteManager,false);
+		final Player mockPlayer = mockPlayerWithInventory("MockPlayer",UUID.randomUUID());
+		final View view = factory.get(mockPlayer);
 		System.out.println(view.size());
 	}
 
@@ -69,6 +83,7 @@ public class PaletteTest{
 		when(pMock.getUniqueId()).thenReturn(uuid);
 		final PlayerInventory invMock = mockInventory();
 		when(pMock.getInventory()).thenReturn(invMock);
+		when(pMock.hasPermission(anyString())).thenReturn(true);
 		return pMock;
 	}
 

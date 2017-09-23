@@ -1,3 +1,4 @@
+usepermissions: false
 palettes:
   example:
     name: "Example Palette"

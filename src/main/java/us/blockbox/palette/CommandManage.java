@@ -6,14 +6,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import us.blockbox.palette.api.StringSanitizer;
 
-import static us.blockbox.palette.PalettePlugin.HOTBAR_LENGTH;
+import java.util.Locale;
 
 public class CommandManage implements CommandExecutor{
-	private PalettePlugin palettePlugin;
+	private final PalettePlugin palettePlugin;
+	private final StringSanitizer stringSanitizer;
 
-	CommandManage(PalettePlugin palettePlugin){
+	CommandManage(PalettePlugin palettePlugin,StringSanitizer stringSanitizer){
 		this.palettePlugin = palettePlugin;
+		this.stringSanitizer = stringSanitizer;
 	}
 
 	@Override
@@ -26,7 +29,7 @@ public class CommandManage implements CommandExecutor{
 			sender.sendMessage(ChatColor.GRAY + "/palmg <add|remove> ...");
 			return true;
 		}
-		final String sub = args[0].toLowerCase();
+		final String sub = args[0].toLowerCase(Locale.US);
 		if(sub.equals("add")){
 			add(sender,args);
 		}
@@ -38,7 +41,7 @@ public class CommandManage implements CommandExecutor{
 			sender.sendMessage("Specify a name.");
 			return;
 		}
-		final StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder(args.length * 6);
 		int i = 1;
 		while(true){
 			if(i < args.length){
@@ -53,10 +56,10 @@ public class CommandManage implements CommandExecutor{
 		}
 		if(sender instanceof Player){
 			final ItemStack[] contents = ((Player)sender).getInventory().getContents();
-			final ItemStack[] stacks = new ItemStack[HOTBAR_LENGTH];
-			System.arraycopy(contents,0,stacks,0,HOTBAR_LENGTH);
+			final ItemStack[] stacks = new ItemStack[PalettePlugin.HOTBAR_LENGTH];
+			System.arraycopy(contents,0,stacks,0,PalettePlugin.HOTBAR_LENGTH);
 			final String key = ChatColor.translateAlternateColorCodes('&',sb.toString());
-			palettePlugin.addPaletteToConfig(key,new PaletteImpl(key,stacks));
+			palettePlugin.addPaletteToConfig(key,new PaletteImpl(key,stringSanitizer.sanitize(key),stacks));
 			sender.sendMessage(ChatColor.GREEN + "Added palette \"" + key + ChatColor.GREEN + "\" to config.");
 		}else{
 			sender.sendMessage("You must be a player.");

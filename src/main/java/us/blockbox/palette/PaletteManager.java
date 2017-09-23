@@ -1,5 +1,8 @@
 package us.blockbox.palette;
 
+import us.blockbox.palette.api.Palette;
+import us.blockbox.palette.api.StringSanitizer;
+
 import java.util.*;
 
 public class PaletteManager{

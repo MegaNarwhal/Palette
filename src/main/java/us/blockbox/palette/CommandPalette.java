@@ -4,8 +4,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import us.blockbox.uilib.ViewManager;
-import us.blockbox.uilib.view.View;
+import us.blockbox.palette.api.ViewFactory;
+import us.blockbox.uilib.api.View;
+import us.blockbox.uilib.api.ViewManager;
 
 public class CommandPalette implements CommandExecutor{
 	private final ViewManager viewManager;
@@ -19,8 +20,9 @@ public class CommandPalette implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
 		if(sender instanceof Player){
-			final View v = viewFactory.getCachedPaletteView();
-			viewManager.setView(((Player)sender),v);
+			final Player player = (Player)sender;
+			final View v = viewFactory.get(player);
+			viewManager.setView(player,v);
 		}else{
 			sender.sendMessage("You must be a player.");
 		}
